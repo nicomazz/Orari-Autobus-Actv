@@ -1,91 +1,65 @@
 <!DOCTYPE html>
-<html lang="en-us">
-  <head>
-    <meta charset="UTF-8">
-    <title>Orari Autobus Actv by nicomazz</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
-  </head>
-  <body>
-    <section class="page-header">
-      <h1 class="project-name">Orari Autobus Actv</h1>
-      <h2 class="project-tagline"></h2>
-      <a href="https://github.com/nicomazz/Orari-Autobus-Actv" class="btn">View on GitHub</a>
-      <a href="https://github.com/nicomazz/Orari-Autobus-Actv/zipball/master" class="btn">Download .zip</a>
-      <a href="https://github.com/nicomazz/Orari-Autobus-Actv/tarball/master" class="btn">Download .tar.gz</a>
-    </section>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Hello wasm-pack!</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
 
-    <section class="main-content">
-      <h3>
-<a id="descrizione" class="anchor" href="#descrizione" aria-hidden="true"><span class="octicon octicon-link"></span></a>Descrizione:</h3>
+</head>
+<body>
+<div id="map"></div>
 
-<p>Orari Autobus ACTV è l'applicazione più completa per muoversi con le linee automobilistiche ACTV.
-Sono presenti informazioni riguardanti:</p>
+<!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+<noscript>This page contains webassembly and javascript content, please enable
+    javascript in your browser.
+</noscript>
+<script src="./index.js"></script>
+<script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDWzBg0xuFZyShU1uyD0xNdgSDdJKtDvkU&callback=initMap&libraries=&v=weekly"
+        async
+></script>
+<script src="./bootstrap.js"></script>
 
-<ul>
-<li>Autobus e tram a Mestre</li>
-<li>Autobus a Lido</li>
-<li>Autobus extraurbani</li>
-<li>Posizione di ogni fermata</li>
-<li>Orari di ogni autobus, ad ogni fermata</li>
-<li>News sullo stato del servizio forniti dall'actv</li>
-</ul>
+</body>
 
-<p>Grazie al supporto degli open data forniti dall'azienda è sempre aggiornata, lavora OFFLINE* e racchiude tutte le funzioni utili agli spostamenti nel territorio veneziano:</p>
 
-<h3>
-<a id="tabelle-orarie" class="anchor" href="#tabelle-orarie" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tabelle orarie:</h3>
+<script>
+    let map;
+    let first_pos = null;
+    let second_pos = null;
 
-<p>consultabili agevolmente e velocemente grazie all'interfaccia user-friendly, permettono di visualizzare gli orari delle diverse corse urbane ed extraurbane localizzando le fermate nella mappa;</p>
+    function initMap() {
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: {lat: 45.440847, lng: 12.315515},
+            zoom: 12,
+        });
 
-<h3>
-<a id="geolocalizzazione-dellutente" class="anchor" href="#geolocalizzazione-dellutente" aria-hidden="true"><span class="octicon octicon-link"></span></a>Geolocalizzazione dell'utente:</h3>
+        map.addListener("click", (mapsMouseEvent) => {
+            if (first_pos === null) {
+                console.log("First set!");
+                first_pos = mapsMouseEvent.latLng.toJSON();
+            } else if (second_pos === null) {
+                console.log("Second set!");
+                second_pos = mapsMouseEvent.latLng.toJSON();
+                navigate(first_pos, second_pos, map);
+                first_pos = null;
+                second_pos = null;
+            }
+        });
+    }
 
-<p>funzione grazie alla quale è possibile sapere le fermate e i mezzi più vicini, con relative distanza e posizione;</p>
+</script>
+<style>
+    #map {
+        height: 100%;
+    }
 
-<h3>
-<a id="mappe" class="anchor" href="#mappe" aria-hidden="true"><span class="octicon octicon-link"></span></a>Mappe:</h3>
-
-<p>per visualizzare le tracce dei percorsi dei mezzi e le fermate;</p>
-
-<h3>
-<a id="ricerca-percorsi" class="anchor" href="#ricerca-percorsi" aria-hidden="true"><span class="octicon octicon-link"></span></a>Ricerca percorsi:</h3>
-
-<p>a partire da fermate o tramite mappa è possibile selezionare punti di partenza e destinazione e determinare i percorsi con i rispettivi autobus più convenienti ad ogni ora di ogni giorno;</p>
-
-<h3>
-<a id="salvataggio-autobus-preferiti" class="anchor" href="#salvataggio-autobus-preferiti" aria-hidden="true"><span class="octicon octicon-link"></span></a>Salvataggio autobus preferiti:</h3>
-
-<p>per consultare ancora più velocemente gli orari dei mezzi più frequentati;</p>
-
-<h3>
-<a id="visualizzazione-autobus-per-fermata" class="anchor" href="#visualizzazione-autobus-per-fermata" aria-hidden="true"><span class="octicon octicon-link"></span></a>Visualizzazione autobus per fermata:</h3>
-
-<p>nella mappa è possibile premere sulle fermate per visualizzare i mezzi che vi si fermano e relativi tempi di attesa.</p>
-
-<h3>
-<a id="news" class="anchor" href="#news" aria-hidden="true"><span class="octicon octicon-link"></span></a>News:</h3>
-
-<p>visualizza le ultime news fornite dall'actv. Si può ricevere una notifica per ogni nuova news non letta.</p>
-
-<p>Questa applicazione permette di risparmiare tempo grazie ai dati affidabili che utilizza e di non perdersi grazie al rintracciamento gps applicato alla mappa delle fermate.
-La consultazione è agevolata dall'interfaccia in puro stile material design.
-Tutti i dati sono consultabilil offline. L'uso non andrà dunque a gravare sulla connessione dati.
-*Al primo avvio dell'app sarà necessario scaricare i dati sul trasporto; ogni volta che questi verranno aggiornati, si riceverà un avviso, e si potrà decidere se aggiornarli o meno (operazione che richiede una connessione)</p>
-
-<p>“ATTENZIONE: QUESTA NON E’ UN’APP UFFICIALE DI ACTV. ESSA SFRUTTA SOLO I DATI FORNITI DALL'AZIENDA. L'AUTORE DECLINA OGNI RESPONSABILITÀ PER EVENTUALI DATI NON CORRETTI"</p>
-
-      <footer class="site-footer">
-        <span class="site-footer-owner"><a href="https://github.com/nicomazz/Orari-Autobus-Actv">Orari Autobus Actv</a> is maintained by <a href="https://github.com/nicomazz">nicomazz</a>.</span>
-
-        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
-      </footer>
-
-    </section>
-
-  
-  </body>
+    /* Optional: Makes the sample page fill the window. */
+    html,
+    body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+</style>
 </html>
